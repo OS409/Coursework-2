@@ -1,0 +1,53 @@
+#include "music.h"
+
+AudioTrack::AudioTrack(const std::string& title, const std::string& artist, int duration)
+    : title_(title), artist_(artist), duration_(duration) {}
+
+const std::string& AudioTrack::getArtist() const { return artist_; }
+const std::string& AudioTrack::getTitle() const { return title_; }
+int AudioTrack::getDuration() const { return duration_; }
+
+void AudioTrack::setArtist(const std::string& artist) { artist_ = artist; }
+void AudioTrack::setTitle(const std::string& title) { title_ = title; }
+void AudioTrack::setDuration
+
+void getArtist(){
+  
+}
+void addTrack(const AudioTrack& track){
+  TrackNode node(track);
+  const std::string& artist = track.getArtist();
+
+  hashMap[artist].push_back(node);
+  balancedBST.insert(node);
+}
+
+void removeTrack(const AudioTrack& track){
+  const std::string& artist = track.getArtist();
+  auto it = hashMap.find(artist);
+  
+  if (it != hashMap.end()){
+    auto node_it = findNodeInList(it->second, track);
+    if (node_it != it->second.end()){
+      balancedBST.erase(*node_it);
+      it->second.erase(node_it);
+    }
+  }
+}
+
+std::list<TrackNode> searchByArtist(const std::string& artist){
+  auto it = hashMap.find(artist);
+  if (it != hashMap.end()){
+    return it->second;
+  } else {
+    return std::list<TrackNode>();
+  }
+}    
+
+std::string getArtist(){
+  return artist;
+}
+
+std::string getTitle(){
+  return title;
+}
