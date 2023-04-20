@@ -1,34 +1,158 @@
-#include "music.h"
+#include <iostream>
+#include <string>
+#include <map>
+#include <list>
+#include <set>
 
-void getArtist(){
-  
-}
-void addTrack(const AudioTrack& track){
-  TrackNode node(track);
-  const std::string& artist = track.getArtist();
+class AudioTrack {
+public:
+    AudioTrack(const std::string& title, const std::string& artist, const std::string& album, int track_number, int duration)
+        : title_(title), artist_(artist), album_(album), track_number_(track_number), duration_(duration) {}
 
-  hashMap[artist].push_back(node);
-  balancedBST.insert(node);
-}
+    const std::string& getTitle() const { return title_; }
+    const std::string& getArtist() const { return artist_; }
+    const std::string& getAlbum() const { return album_; }
+    int getTrackNumber() const { return track_number_; }
+    int getDuration() const { return duration_; }
 
-void removeTrack(const AudioTrack& track){
-  const std::string& artist = track.getArtist();
-  auto it = hashMap.find(artist);
-  
-  if (it != hashMap.end()){
-    auto node_it = findNodeInList(it->second, track);
-    if (node_it != it->second.end()){
-      balancedBST.erase(*node_it);
-      it->second.erase(node_it);
+    void setTitle(const std::string& title) { title_ = title; }
+    void setArtist(const std::string& artist) { artist_ = artist; }
+    void setAlbum(const std::string& album) { album_ = album; }
+    void setTrackNumber(int track_number) { track_number_ = track_number; }
+    void setDuration(int duration) { duration_ = duration; }
+
+private:
+    std::string title_;
+    std::string artist_;
+    std::string album_;
+    int track_number_;
+    int duration_; // Duration in seconds
+};
+
+class TrackNode {
+public:
+    // Constructor that initializes the TrackNode with an AudioTrack
+    explicit TrackNode(const AudioTrack& track) : track_(track) {}
+
+    // Getter for the AudioTrack held by this TrackNode
+    const AudioTrack& getTrack() const { return track_; }
+
+    // Overloading the '<' operator to compare TrackNode objects based on the title of their AudioTracks
+    bool operator<(const TrackNode& other) const { return track_.getTitle() < other.track_.getTitle(); }
+
+private:
+    AudioTrack track_; // Holds the AudioTrack object
+};
+
+class TrackLibrary {
+public:
+    // Function to add an AudioTrack to the library
+    void addTrack(const AudioTrack& track) {
+        TrackNode node(track); // Create a TrackNode from the given AudioTrack
+        const std::string& artist = track.getArtist(); // Get the artist name from the AudioTrack
+
+        // If the artist is not already in the hashMap, create a new list for their tracks
+        hashMap[artist].push_back(node); // Add the TrackNode to the list of tracks for this artist
+        balancedBST.insert(node); // Insert the TrackNode into the balanced binary search tree
     }
-  }
-}
 
-std::list<TrackNode> searchByArtist(const std::string& artist){
-  auto it = hashMap.find(artist);
-  if (it != hashMap.end()){
-    return it->second;
-  } else {
-    return std::list<TrackNode>();
-  }
-}    
+    // Function to remove an AudioTrack from the library
+    void removeTrack(const AudioTrack& track) {
+        const std::string& artist = track.getArtist(); // Get the artist name from the AudioTrack
+        auto it = hashMap.find(artist); // Find the artist in the hashMap
+
+        // If the artist is found in the hashMap
+        if (it != hashMap.end()) {
+            // Find the corresponding TrackNode in the list of tracks for this artist
+            auto node_it = findNodeInList(it->second, track);
+
+            // If the TrackNode is found
+            if (node_it != it->second.end()) {
+                balancedBST.erase(*node_it); // Remove the TrackNode from the balanced binary search tree
+                it->second.erase(node_it); // Remove the TrackNode from the list of tracks for this artist
+            }
+        }
+    }
+// Function to search for tracks by a given artist
+    std::list<TrackNode> searchByArtist(const std::string& artist) {
+        auto it = hashMap.find(artist); // Find the artist
+         // If the artist is found, return the list of tracks for this artist
+        if (it != hashMap.end()) {
+            return it->second;
+        }
+
+        // If the artist is not found, return an empty list
+        return std::list<TrackNode>();
+    }
+
+    // Function to search for a track by a given title using the balanced binary search tree
+    const AudioTrack* searchByTitle(const std::string& title) {
+        // Create a dummy AudioTrack with the given title
+        AudioTrack dummy_track(title, "", "", 0, 0);
+
+        // Create a dummy TrackNode with the dummy AudioTrack
+        TrackNode dummy_node(dummy_track);
+
+        // Search the balanced binary search tree for the dummy TrackNode
+        auto it = balancedBST.find(dummy_node);
+
+        // If the TrackNode is found, return a pointer to its AudioTrack
+        if (it != balancedBST.end()) {
+            return &(it->getTrack());
+        }
+
+        // If the TrackNode is not found, return a nullptr
+        return nullptr;
+    }
+
+private:
+    // Helper function to find a TrackNode in a list of TrackNodes
+    std::list<TrackNode>::iterator findNodeInList(std::list<TrackNode>& nodeList, const AudioTrack& track) {
+        for (auto it = nodeList.begin(); it != nodeList.end(); ++it) {
+            if (it->getTrack().getTitle() == track.getTitle()) {
+                return it;
+            }
+        }
+
+        // If the TrackNode is not found, return an iterator to the end of the list
+        return nodeList.end();
+    }
+
+    std::map<std::string, std::list<TrackNode>> hashMap; // HashMap where key: artist, value: list of TrackNodes
+    std::set<TrackNode> balancedBST; // Balanced binary search tree to store TrackNodes
+};
+
+int main() {
+    // Create an instance of TrackLibrary
+    TrackLibrary library;
+
+    // Create some AudioTracks
+    AudioTrack track1("Song A", "Artist 1", "Album 1", 1, 240);
+    AudioTrack track2("Song B", "Artist 1", "Album 1", 2, 220);
+    AudioTrack track3("Song C", "Artist 2", "Album 2", 1, 200);
+
+    // Add the tracks to the library
+    library.addTrack(track1);
+    library.addTrack(track2);
+    library.addTrack(track3);
+
+    // Search for a track by artist
+    std::list<TrackNode> artist1Tracks = library.searchByArtist("Artist 1");
+
+    // Print the titles of the tracks by Artist 1
+    for (const auto& trackNode : artist1Tracks) {
+        std::cout << "Track by Artist 1: " << trackNode.getTrack().getTitle() << std::endl;
+    }
+
+    // Search for a track by title
+    const AudioTrack* foundTrack = library.searchByTitle("Song C");
+
+    // If the track is found, print its information
+    if (foundTrack != nullptr) {
+        std::cout << "Track found: " << foundTrack->getTitle() << " by " << foundTrack->getArtist() << std::endl;
+    } else {
+        std::cout << "Track not found." << std::endl;
+    }
+
+    return 0;
+}
