@@ -1,0 +1,42 @@
+#include "music.h"
+
+void getArtist(){
+  
+}
+void addTrack(const AudioTrack& track){
+  TrackNode node(track);
+  const std::string& artist = track.getArtist();
+
+  hashMap[artist].push_back(node);
+  balancedBST.insert(node);
+}
+
+void removeTrack(const AudioTrack& track){
+  const std::string& artist = track.getArtist();
+  auto it = hashMap.find(artist);
+  
+  if (it != hashMap.end()){
+    auto node_it = findNodeInList(it->second, track);
+    if (node_it != it->second.end()){
+      balancedBST.erase(*node_it);
+      it->second.erase(node_it);
+    }
+  }
+}
+
+std::list<TrackNode> searchByArtist(const std::string& artist){
+  auto it = hashMap.find(artist);
+  if (it != hashMap.end()){
+    return it->second;
+  } else {
+    return std::list<TrackNode>();
+  }
+}    
+
+std::string getArtist(){
+  return artist;
+}
+
+std::string getTitle(){
+  return title;
+}
