@@ -3,6 +3,7 @@
 #include <map>
 #include <list>
 #include <set>
+#include <algorithm>
 
 class AudioTrack {
 public:
@@ -73,6 +74,19 @@ public:
             }
         }
     }
+  bool removeTrackByTitle(const std::string& title) {
+    auto it = std::find_if(balancedBST.begin(), balancedBST.end(),
+                           [&title](const TrackNode& node) {
+                               return node.getTrack().getTitle() == title;
+                           });
+    
+    if (it != balancedBST.end()) {
+      removeTrack(it->getTrack());
+      return true;
+    }
+    
+    return false;
+}
 // Function to search for tracks by a given artist
     std::list<TrackNode> searchByArtist(const std::string& artist) {
         auto it = hashMap.find(artist); // Find the artist

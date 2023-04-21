@@ -4,7 +4,7 @@
 #include <string>
 #include <sstream>
 
-void addTracks(TrackLibrary &library, const std::string &filename)
+void addMultipleTracks(TrackLibrary &library, const std::string &filename)
 {
     std::ifstream source_file;
     source_file.open(filename);
@@ -24,7 +24,7 @@ void addTracks(TrackLibrary &library, const std::string &filename)
             std::cout << "Error: Invalid input on line " << lineCount << std::endl;
         } else {
 	  AudioTrack track(title, artist, "", 0, duration);
-	  addTracks(track);
+	  library.addTrack(track);
             std::cout << "Files successfully loaded";
         }
     }
@@ -51,11 +51,21 @@ int main()
             std::string filename;
             std::cout << "Enter the filename to load tracks from: ";
             std::cin >> filename;
-            library.addTrack(library, filename);
+            addMultipleTracks(library, filename);
 
         } else if (option == 's') {
         } else if (option == 'e') {
         } else if (option == 'r') {
+            std::string title;
+            std::cout << "Enter the title of the track to remove: ";
+            std::cin.ignore();
+            std::getline(std::cin, title);
+
+            if (library.removeTrackByTitle(title)) {
+                std::cout << "Track removed.\n";
+            } else {
+                std::cout << "Track not found.\n";
+            }
         } else if (option != 'p') {
             std::cout << "Invalid option. Please enter s, e, r, a, or p\n";
         }

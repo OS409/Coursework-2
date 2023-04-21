@@ -3,6 +3,8 @@
 #include <map>
 #include <list>
 #include <set>
+#include "music.h"
+#include <algorithm>
 
 class AudioTrack {
 public:
@@ -73,6 +75,19 @@ public:
             }
         }
     }
+  bool removeTrackByTitle(const std::string& title) {
+    auto it = std::find_if(balancedBST.begin(), balancedBST.end(),
+                           [&title](const TrackNode& node) {
+                               return node.getTrack().getTitle() == title;
+                           });
+    
+    if (it != balancedBST.end()) {
+      removeTrack(it->getTrack());
+      return true;
+    }
+    
+    return false;
+}
 // Function to search for tracks by a given artist
     std::list<TrackNode> searchByArtist(const std::string& artist) {
         auto it = hashMap.find(artist); // Find the artist
@@ -121,38 +136,3 @@ private:
     std::map<std::string, std::list<TrackNode>> hashMap; // HashMap where key: artist, value: list of TrackNodes
     std::set<TrackNode> balancedBST; // Balanced binary search tree to store TrackNodes
 };
-
-int main() {
-    // Create an instance of TrackLibrary
-    TrackLibrary library;
-
-    // Create some AudioTracks
-    AudioTrack track1("Song A", "Artist 1", "Album 1", 1, 240);
-    AudioTrack track2("Song B", "Artist 1", "Album 1", 2, 220);
-    AudioTrack track3("Song C", "Artist 2", "Album 2", 1, 200);
-
-    // Add the tracks to the library
-    library.addTrack(track1);
-    library.addTrack(track2);
-    library.addTrack(track3);
-
-    // Search for a track by artist
-    std::list<TrackNode> artist1Tracks = library.searchByArtist("Artist 1");
-
-    // Print the titles of the tracks by Artist 1
-    for (const auto& trackNode : artist1Tracks) {
-        std::cout << "Track by Artist 1: " << trackNode.getTrack().getTitle() << std::endl;
-    }
-
-    // Search for a track by title
-    const AudioTrack* foundTrack = library.searchByTitle("Song C");
-
-    // If the track is found, print its information
-    if (foundTrack != nullptr) {
-        std::cout << "Track found: " << foundTrack->getTitle() << " by " << foundTrack->getArtist() << std::endl;
-    } else {
-        std::cout << "Track not found." << std::endl;
-    }
-
-    return 0;
-}

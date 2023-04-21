@@ -4,7 +4,7 @@
 #include <string>
 #include <sstream>
 
-void addTracks(TrackLibrary &library, const std::string &filename)
+void addMultipleTracks(TrackLibrary &library, const std::string &filename)
 {
     std::ifstream source_file;
     source_file.open(filename);
@@ -24,45 +24,45 @@ void addTracks(TrackLibrary &library, const std::string &filename)
             std::cout << "Error: Invalid input on line " << lineCount << std::endl;
         } else {
 	  AudioTrack track(title, artist, "", 0, duration);
-	  addTracks();
+	  library.addTrack(track);
             std::cout << "Files successfully loaded";
         }
     }
 }
 
-int main()
-{
-
+int main() {
     TrackLibrary library;
+
     char option;
     do {
-
-        std::cout << "\n******** Menu ********\n";
-        std::cout << "s : save tracks in the library to a file\n";
-        std::cout << "e : search by artist/band name\n";
-        std::cout << "r : remove specific track(s)\n";
-        std::cout << "a : Add all tracks from a file\n";
-        std::cout << "p : exit program\n";
-        std::cout << "select an option from above: ";
+        std::cout << "Options:\n"
+                  << "  (p)lay\n"
+                  << "  (s)top\n"
+                  << "  (n)ext\n"
+                  << "  (r)emove\n"
+                  << "  (q)uit\n"
+                  << "Enter your option: ";
         std::cin >> option;
 
-        if (option == 'a') {
-
-            std::string filename;
-            std::cout << "Enter the filename to load tracks from: ";
-            std::cin >> filename;
-            library.addTrack(library, filename);
-
+        if (option == 'p') {
         } else if (option == 's') {
-        } else if (option == 'e') {
+        } else if (option == 'n') {
         } else if (option == 'r') {
-        } else if (option != 'p') {
-            std::cout << "Invalid option. Please enter s, e, r, a, or p\n";
-        }
+            std::string title;
+            std::cout << "Enter the title of the track to remove: ";
+            std::cin.ignore();
+            std::getline(std::cin, title);
 
-    } while (option != 'p');
+            if (library.removeTrackByTitle(title)) {
+                std::cout << "Track removed.\n";
+            } else {
+                std::cout << "Track not found.\n";
+            }
+        } else if (option != 'q') {
+            std::cout << "Invalid option, please try again.\n";
+        }
+    } while (option != 'q');
 
     std::cout << "Exiting...\n";
-
     return 0;
 }
