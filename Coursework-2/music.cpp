@@ -4,6 +4,8 @@
 #include <list>
 #include <set>
 #include <algorithm>
+#include <fstream>
+#include <sstream>
 
 class AudioTrack {
 public:
@@ -91,6 +93,19 @@ std::vector<AudioTrack> searchByArtist(const std::string& artist) const {
         }
     }
     return tracksByArtist;
+}
+  void saveLibraryToFile(const std::string& filename) const {
+    std::ofstream file(filename);
+    
+    if (file.is_open()) {
+        for (const TrackNode& trackNode : balancedBST) {
+            const AudioTrack& track = trackNode.getTrack();
+            file << track.getTitle() << "," << track.getArtist() << "," << track.getDuration() << std::endl;
+        }
+        file.close();
+    } else {
+        std::cerr << "Unable to open file: " << filename << std::endl;
+    }
 }
     // Function to search for a track by a given title using the balanced binary search tree
     const AudioTrack* searchByTitle(const std::string& title) {

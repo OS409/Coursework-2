@@ -37,7 +37,7 @@ class TrackLibrary {
 public:
   void addTrack(const AudioTrack& track);
   bool removeTrackByTitle(const std::string& title);
-  std::list<TrackNode> searchByArtist(const std::string& artist);
+  std::vector<AudioTrack> searchByArtist (const std::string& artist)
   
 private:
   std::map<std::string, std::list<TrackNode>> hashMap;

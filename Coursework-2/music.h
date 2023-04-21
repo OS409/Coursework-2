@@ -37,8 +37,8 @@ class TrackLibrary {
 public:
   void addTrack(const AudioTrack& track);
   bool removeTrackByTitle(const std::string& title);
-  std::vector<AudioTrack> searchByArtist (const std::string& artist)
-  
+  std::vector<AudioTrack> searchByArtist (const std::string& artist);
+  void saveLibraryToFile(const std::string& filename);
 private:
   std::map<std::string, std::list<TrackNode>> hashMap;
   std::set<TrackNode> balancedBST;

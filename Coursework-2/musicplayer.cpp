@@ -54,6 +54,9 @@ int main()
             addMultipleTracks(library, filename);
 
         } else if (option == 's') {
+	  std::string filename;
+	  std::cin >> filename;
+	  library.saveLibraryToFile(filename);
         } else if (option == 'e') {
 	  std::string artist;
 	  std::cout << "Enter the name of the artist/band name you want to search: ";
