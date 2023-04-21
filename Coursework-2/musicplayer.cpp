@@ -23,7 +23,7 @@ void addMultipleTracks(TrackLibrary &library, const std::string &filename)
         if (!(std::getline(iss, title, '\t') && std::getline(iss, artist, '\t') && (iss >> duration))) {
             std::cout << "Error: Invalid input on line " << lineCount << std::endl;
         } else {
-	  AudioTrack track(title, artist, "", 0, duration);
+	  AudioTrack track(title, artist, duration);
 	  library.addTrack(track);
             std::cout << "Files successfully loaded";
         }
@@ -55,13 +55,19 @@ int main()
 
         } else if (option == 's') {
         } else if (option == 'e') {
-        } else if (option == 'r') {
-            std::string title;
-            std::cout << "Enter the title of the track to remove: ";
-            std::cin.ignore();
-            std::getline(std::cin, title);
-
-            if (library.removeTrackByTitle(title)) {
+	  std::string artist;
+	  std::cout << "Enter the name of the artist/band name you want to search: ";
+	  std::cin >> artist;
+	  std::vector<AudioTrack> tracksByArtist = library.searchByArtist(artist);
+	  std::cout << "Tracks by " << artist << ":\n";
+	  for (const auto& track : tracksByArtist) {
+	    std::cout << track.getTitle() << " - " << track.getArtist() << " - " << track.getDuration() << " seconds\n";
+	  }
+	} else if (option == 'r') {
+	  std::string title;
+	  std::cout << "Enter the title of the track to remove: ";
+	  std::cin >> title;
+	  if (library.removeTrackByTitle(title)) {
                 std::cout << "Track removed.\n";
             } else {
                 std::cout << "Track not found.\n";
